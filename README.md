@@ -76,9 +76,11 @@ The sr.robot library contains support for using a simulated compass unit on the 
 ```
 When called, the get_heading method will return the heading of the robot in radians as a float. The heading is in the range 0 to tau (2π), where 0 is the robot facing directly North, and values increasing clockwise.
 
-## Robot behaviour
+## Idea - Robot behaviour
+The bottom idea to guide the robot along the path was implementing 
+![Robot_RT1](https://user-images.githubusercontent.com/91536387/140644164-46320949-0a9e-4663-b170-e6bc68a35287.png)
 
-## Code description
+## Implementation - Code description
 The code is structured in a main function and 5 additional functions
 
 ### Functions
