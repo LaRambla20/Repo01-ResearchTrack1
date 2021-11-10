@@ -94,45 +94,70 @@ The idea presented above was implemented with a python script structured in a ma
 The first function can be described in pseudocode as follows:
 ```python
 drive(speed, seconds):
- set the speed of both robot wheels to speed for seconds seconds
+	set the speed of both robot wheels to speed for seconds seconds
 ```
 The second function can be described in pseudocode as follows:
 ```python
 turn(speed, seconds):
- set the speed of one of the robot wheels to speed and the other to -speed for seconds seconds
+	set the speed of one of the robot wheels to speed and the other to -speed for seconds seconds
 ```
 The third function can be described in pseudocode as follows:
 ```python
-check_dangerous_tokens:
- retrieve the tokens around the robot within a certain distance with the method R.see()
- for i spanning the tokens just detected:
-  if (the token is gold) and (the distance from the robot is less than dan_th) and (the angular displacement between the robot and the token is between -per_dan_th=-40 and per_dan_th=40):
-   increment the number of dangerous golden tokens
- return the number of dangerous golden tokens
+check_dangerous_tokens():
+	initialize the number of dangerous golden tokens to 0
+	retrieve the tokens around the robot within a certain distance with the method R.see()
+	for i spanning the tokens just detected:
+		if (the token is gold) and (the distance from the robot is less than dan_th=0.9) and (the angular displacement between the robot and the token is between -per_dan_th=-40 and per_dan_th=40):
+			increment the number of dangerous golden tokens
+	return the number of dangerous golden tokens
 ```
 The fourth function can be described in pseudocode as follows:
 ```python
 count_tokens():
+	initialize the number of near golden tokens on the left to 0
+	initialize the number of near golden tokens on the right to 0
 	retrieve the tokens around the robot within a certain distance with the method R.see()
 	for i spanning the tokens just detected:
-		if (the token is gold) and (the distance from the robot is less than near_th) and (the angular displacement between the robot and the token is between -per_near_th=-90 and per_near_th=90):
+		if (the token is gold) and (the distance from the robot is less than near_th=1.6) and (the angular displacement between the robot and the token is between -per_near_th=-135 and per_near_th=135):
 			if the angualar displacement between the robot and the token is less than 0:
-				increment the number of left golden tokens
+				increment the number of near golden tokens on the left
 			else:
-				increment the number of right golden tokens
- return the number of left golden tokens and the number of right golden tokens
+				increment the number of near golden tokens on the right
+	return the number of near golden tokens on the left and the number of near golden tokens on the right
 ```
 The fifth function can be described in pseudocode as follows:
 ```python
 change_direction(n_left_tokens, n_right_tokens):
+	initialize the nearest wall distance to 100
 	if the number of left tokens is greater than the number of right tokens:
 		turn right a little
 	elif the number of left tokens is less than the number of right tokens:
 		turn left a little
- elif the number of left tokens is equal to the number of right tokens:
-  retrieve the tokens around the robot within a certain distance with the method R.see()
-  for i spanning the tokens just detected
-   if ((the token is gold) and (the angular displacement between the robot and the token is between -per_wall_th2=-135 and -per_wall_th1=-75) or (the angular displacement between the robot and the token is between per_wall_th1=75 and per_wall_th2=135)):
+	elif the number of left tokens is equal to the number of right tokens:
+		retrieve the tokens around the robot within a certain distance with the method R.see()
+		for i spanning the tokens just detected
+			if (the token is gold) and ((the angular displacement between the robot and the token is between -per_wall_th2=-105 and -per_wall_th1=-75) or (the angular displacement between the robot and the token is between per_wall_th1=75 and per_wall_th2=105)):
+				if the distance from the robot is less than the nearest wall distance:
+					update the nearest wall distance
+					update the nearest wall angular displacement
+		if the nearest wall angular displacement is less than 0:
+			turn right a little
+		else:
+			turn left a little
+```
+The sixth function can be described in pseudocode as follows:
+```python
+detect_silver_tokens():
+	initialize the distance from the detected silver token to 100
+	retrieve the tokens around the robot within a certain distance with the method R.see()
+	for i spanning the tokens just detected:
+		if (the token is silver) and (the distance from the robot is less than sil_th=1.2) and (the angular displacement between the robot and the token is between -per_near_th=-90 and per_near_th=90):
+			update the detected silver token distance
+			update the detected silver token angular displacement
+	if the detected silver token distance is still 100:
+		return -1 and -1
+	else:
+	return the detected silver token distance and the detected silver token angular displacement
 ```
    
 ### Main
