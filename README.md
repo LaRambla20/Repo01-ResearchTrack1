@@ -88,20 +88,53 @@ First of all the robot should detect silver tokens. In order to do that the visu
 Regarding the recognition of dangerous golden tokens instead, the visual field is restricted to a circular sector, 80 degrees wide and with a dan_th radius. If at least one golden box is inside this sector, the robot stops and checks where to turn to avoid collision. This check is run using two different approches. The first one is based on the fact that usually, once dangerous golden blocks are detected, the robot should turn right or left according to the side where the number of near golden blocks is smaller. Thus the visual field is limited to a circular sector, 270 degrees wide and with a near_th radius. This particular angular width is chosen so as to prevent the robot from seeing the golden boxes behind itself, since they will just ruin the accuracy of the estimate. There are specific cases though in which the number of near golden tokens on the right is equal to the number of near golden tokens on the left, and then the first method will not work properly. For this reason the second approach must be considered. This simply consists in checking the distance between the robot and the nearest golden token on the left, and in checking the distance between the robot and the nearest golden token on the right. In order to carry out this task the visual field is restricted to two circular sectors, one ranging from 75 degrees and 105 degrees with no limit on the radius, and the other ranging from -105 degrees and -75 degrees with no limit on the radius. Naturally, once the condition to resort to this second solution is verified, the robot should turn right or left according to the side where the distance from the nearest golden token is greater. 
 
 ## Implementation - Code description
-The idea presented above was implemented with a python script structured in a main function and 6 additional functions: drive(), turn(), check_dangerous_tokens(), count_tokens(), change_direction(), detect_silver_tokens()
+The idea presented above was implemented with a python script structured in a main function and six additional functions: `drive(speed, seconds)`, `turn(speed, seconds)`, `check_dangerous_tokens()`, `count_tokens()`, `change_direction(n_left_tokens, n_right_tokens)`, `detect_silver_tokens()`.
 
 ### Functions
-Each `Marker` object has the following attributes:
-
-* `info`: a `MarkerInfo` object describing the marker itself. Has the following attributes:
-  * `code`: the numeric code of the marker.
-  * `marker_type`: the type of object the marker is attached to (either `MARKER_TOKEN_GOLD`, `MARKER_TOKEN_SILVER` or `MARKER_ARENA`).
-
+The first function can be described in pseudocode as follows:
 ```python
-R.motors[0].m0.power = 25
-R.motors[0].m1.power = -25
+drive(speed, seconds):
+ set the speed of both robot wheels to speed for seconds seconds
 ```
-
+The second function can be described in pseudocode as follows:
+```python
+turn(speed, seconds):
+ set the speed of one of the robot wheels to speed and the other to -speed for seconds seconds
+```
+The third function can be described in pseudocode as follows:
+```python
+check_dangerous_tokens:
+ retrieve the tokens around the robot within a certain distance with the method R.see()
+ for i spanning the tokens just detected:
+  if (the token is gold) and (the distance from the robot is less than dan_th) and (the angular displacement between the robot and the token is between -per_dan_th=-40 and per_dan_th=40):
+   increment the number of dangerous golden tokens
+ return the number of dangerous golden tokens
+```
+The fourth function can be described in pseudocode as follows:
+```python
+count_tokens():
+	retrieve the tokens around the robot within a certain distance with the method R.see()
+	for i spanning the tokens just detected:
+		if (the token is gold) and (the distance from the robot is less than near_th) and (the angular displacement between the robot and the token is between -per_near_th=-90 and per_near_th=90):
+			if the angualar displacement between the robot and the token is less than 0:
+				increment the number of left golden tokens
+			else:
+				increment the number of right golden tokens
+ return the number of left golden tokens and the number of right golden tokens
+```
+The fifth function can be described in pseudocode as follows:
+```python
+change_direction(n_left_tokens, n_right_tokens):
+	if the number of left tokens is greater than the number of right tokens:
+		turn right a little
+	elif the number of left tokens is less than the number of right tokens:
+		turn left a little
+ elif the number of left tokens is equal to the number of right tokens:
+  retrieve the tokens around the robot within a certain distance with the method R.see()
+  for i spanning the tokens just detected
+   if ((the token is gold) and (the angular displacement between the robot and the token is between -per_wall_th2=-135 and -per_wall_th1=-75) or (the angular displacement between the robot and the token is between per_wall_th1=75 and per_wall_th2=135)):
+```
+   
 ### Main
 
 ## System Limitations and Possible Improvements
