@@ -176,11 +176,11 @@ while 1
 					turn right a little
 				retrieve the distance and the angular displacement of the detected silver token, calling the detect_silver_tokens function
 		else:
-			Grab the silver token
+			Grab the silver token with the method R.grab()
 			if the grabbing succeeds:
 				turn 180 degrees
-				release the silver token
-				step back a little to avoid hitting it
+				release the silver token with the method R.release()
+				step back to avoid hitting the silver token just released
 				turn 180 degrees to reset the orientation to the initial one
 	else:
 		retrieve the number of golden tokens dangerously near, calling the check_dangerous_tokens function
@@ -192,5 +192,8 @@ while 1
 ```
 
 ## System Limitations and Possible Improvements
+As far as the limitations of the script are concerned, mainly two of them can be found. The first one is that the robot, once it has released a silver token, steps back in order to avoid hitting that token while resetting its orientation. This could be a problem if the grabbed silver token was very close to a golden wall, because, while performing the step back, the robot could collide with that wall. A possible solution could be to check the distance from the golden walls as a priority with respect to the silver tokens detection. In this manner, however, it would be possible that silver blocks that are very close to the walls are not picked up by the robot.  
+Another similiar issue concerns the rotation of the robot once it has grabbed a silver token. According to the script the robot rotates one way or the other based on its  initial orientation. However, if the grabbed silver token is too close to a golden wall, the robot could, during its rotation, hit the golden blocks. In order to solve this issue a control on the distance from the nearest wall should be performed and the rotation should be carried out according to that check.
+A possible improvement could be to implement a solution to this problem that doesn't rely on the fact that the walls are made of separate blocks. Under these circumstances the check on the number of golden blocks around the robot coul not be performed and the second approach that is here implemented could result in the robot going back. In order to avoid that the method `R.heading` of the class `Robot` could be used. As a matter of fact, this method could allow the robot to keep track of its orientation and then to understand when an odd change of orientation occurs.
 
 [sr-api]: https://studentrobotics.org/docs/programming/sr/
