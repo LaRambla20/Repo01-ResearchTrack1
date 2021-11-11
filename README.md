@@ -159,8 +159,37 @@ detect_silver_tokens():
 	else:
 	return the detected silver token distance and the detected silver token angular displacement
 ```
-   
+
 ### Main
+The main function can be described in pseudocode as follows:
+
+```python
+while 1
+	go forward a bit, calling the drive function
+	retrieve the distance and the angular displacement of the detected silver token, if any, calling the detect_silver_tokens function
+	if a silver token was detected:
+		if the distance from the silver token is greater than d_th=0.4:
+			while the angular displacement between the robot and the detected silver token is outside the range [-a_th=, a_th=]:
+				if the angular displacement between the robot and the detected silver token is less than -a_th=-2:
+					turn left a little
+				if the angular displacement between the robot and the detected silver token is greater than a_th=2:
+					turn right a little
+				retrieve the distance and the angular displacement of the detected silver token, calling the detect_silver_tokens function
+		else:
+			Grab the silver token
+			if the grabbing succeeds:
+				turn 180 degrees
+				release the silver token
+				step back a little to avoid hitting it
+				turn 180 degrees to reset the orientation to the initial one
+	else:
+		retrieve the number of golden tokens dangerously near, calling the check_dangerous_tokens function
+		if the number of dangerous golden tokens is not 0:
+			while the number of dangerous golden tokens is not 0:
+				retrieve the number of near golden tokens on the left and the number of near golden tokens on the right, calling the count_tokens function
+				change the direction, calling the change_direction function
+				retrieve the number of golden tokens dangerously near, calling the check_dangerous_tokens function
+```
 
 ## System Limitations and Possible Improvements
 
